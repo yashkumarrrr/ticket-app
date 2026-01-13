@@ -1,0 +1,39 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Dart Format
+      run: dart format --set-exit-if-changed .
+
+    - name: Flutter Analyze
+      run: flutter analyze --fatal-infos
+
+    - name: Run Tests
+      run: flutter test --coverage
+
+    - name: Build APK (Optional)
+      run: flutter build apk --release
+
+    # Optional Deployment
+    # - name: Deploy to Firebase App Distribution
+    #   run: firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app APP_ID --token ${{ secrets.FIREBASE_TOKEN }}
